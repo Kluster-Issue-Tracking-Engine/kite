@@ -1,7 +1,7 @@
 {
   "name": "kite",
   "version": "1.0.0",
-  "description": "Kubernetes Issue Tracking Engine",
+  "description": "Konflux Issue Tracking Engine",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {

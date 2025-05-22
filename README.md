@@ -1,6 +1,6 @@
 # Kite :kite:
 
-Kubernetes Issue Tracking Engine
+Konflux Issue Tracking Engine
 
 :construction: Under Construction, still a POC :construction:
 
