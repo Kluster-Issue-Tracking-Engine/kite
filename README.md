@@ -2,7 +2,7 @@
 
 Kubernetes Issue Tracking Engine
 
-Under :construction:
+:construction: Under Construction, still a POC :construction:
 
 ## Features
 
