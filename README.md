@@ -75,7 +75,7 @@ This is used to talk to the cluster, allowing the service to perform actions lik
 
 ```bash
 # Build and start the services
-docker compose -f compose.yaml up -d
+docker compose -f compose.yaml up -d --build
 
 # Check if services are running
 docker compose ps
