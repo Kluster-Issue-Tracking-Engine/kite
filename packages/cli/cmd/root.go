@@ -5,9 +5,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/CryptoRodeo/kite/packages/cli/pkg/api"
-	"github.com/CryptoRodeo/kite/packages/cli/pkg/config"
-	"github.com/CryptoRodeo/kite/packages/cli/pkg/formatter"
+	"github.com/konflux-ci/kite/packages/cli/pkg/api"
+	"github.com/konflux-ci/kite/packages/cli/pkg/config"
+	"github.com/konflux-ci/kite/packages/cli/pkg/formatter"
 	"github.com/spf13/cobra"
 )
 

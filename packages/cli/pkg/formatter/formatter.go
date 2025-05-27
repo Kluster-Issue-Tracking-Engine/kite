@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/CryptoRodeo/kite/packages/cli/pkg/models"
+	"github.com/konflux-ci/kite/packages/cli/pkg/models"
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 	"gopkg.in/yaml.v3"

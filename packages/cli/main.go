@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/CryptoRodeo/kite/packages/cli/cmd"
-	"github.com/CryptoRodeo/kite/packages/cli/pkg/config"
+	"github.com/konflux-ci/kite/packages/cli/cmd"
+	"github.com/konflux-ci/kite/packages/cli/pkg/config"
 )
 
 func main() {
