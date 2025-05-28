@@ -16,15 +16,13 @@ Konflux Issue Tracking Engine
 
 The project is organized in a monorepo with these main components:
 
-- `packages/backend`: Node.js Express API server with PostgreSQL database
+- `packages/backend`: gin-gonic/gin server with PostgreSQL database
 - `packages/cli`: Go-based command-line tool (works as standalone or kubectl plugin)
 
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- [Node.js](https://nodejs.org/) v18 or later
-- [Yarn](https://yarnpkg.com/getting-started/install)
-- [Go](https://golang.org/doc/install) v1.20 or later
+- [Go](https://golang.org/doc/install) v1.23 or later
 - [Make](https://www.gnu.org/software/make/)
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
@@ -34,7 +32,7 @@ The project is organized in a monorepo with these main components:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/cryptorodeo/kite.git
+git clone https://github.com/konflux-ci/kite.git
 cd kite
 ```
 
@@ -88,7 +86,11 @@ docker compose -f compose.yaml down -v
 
 ```bash
 # Build and install the CLI tool
-yarn setup:cli
+cd packages/cli
+make build
+make install
+# Optional kubectl plugin
+make kubectl-plugin
 
 # This will:
 # - Build the Go CLI binary
@@ -98,5 +100,5 @@ yarn setup:cli
 
 ### 6. Access the Application
 
-- API: http://localhost:3000
+- API: http://localhost:3000/health
 

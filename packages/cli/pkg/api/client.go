@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/CryptoRodeo/kite/packages/cli/pkg/config"
-	"github.com/CryptoRodeo/kite/packages/cli/pkg/models"
+	"github.com/konflux-ci/kite/packages/cli/pkg/config"
+	"github.com/konflux-ci/kite/packages/cli/pkg/models"
 )
 
 // Client is the API client for the Konflux issues API

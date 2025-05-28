@@ -18,9 +18,8 @@ A command-line interface for managing Konflux issues, written in Go. This CLI to
 ### Option 1: Build from source
 
 ```bash
-# Requires Go 1.16+
-git clone https://github.com/CryptoRodeo/issues-cli.git
-cd issues-cli
+git clone https://github.com/konflux-ci/kite.git
+cd packages/cli
 make build
 make install
 ```

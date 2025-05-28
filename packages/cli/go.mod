@@ -1,4 +1,4 @@
-module github.com/CryptoRodeo/kite/packages/cli
+module github.com/konflux-ci/kite/packages/cli
 
 go 1.20
 
