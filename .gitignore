@@ -1,2 +1,17 @@
+# Air (hot reload tool) temporary files
+tmp/
+build-errors.log
+
+# Development database volume
+pgdata_dev/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
 packages/backend/configs/kube-config.yaml
+
 packages/cli/konflux-issues

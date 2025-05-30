@@ -2,103 +2,46 @@
 
 Konflux Issue Tracking Engine
 
-:construction: Under Construction, still a POC :construction:
+:construction: **Under Construction – Currently a Proof of Concept** :construction:
+
+## About
+
+Kite is a centralized service for tracking Konflux-related issues that may disrupt your ability to build and deploy applications.
+
+These issues might include:
+
+- PipelineRun failures  
+- Release errors  
+- MintMaker issues  
+- Cluster-wide problems  
+
+Kite **does not** monitor cluster resources to detect these issues.  
+That responsibility is left to you, based on your specific environment.
+
+Instead, Kite acts as a **central information store**, offering the following features:
 
 ## Features
 
-- **Issue Tracking**: Track build failures, test failures, release issues, dependency problems, and pipeline failures in a centralized, extendable service.
-- **CLI Integration**: Check issues from your terminal or as a kubectl plugin
-- **Namespace Isolation**: Issues are separated by Kubernetes namespace for security
-- **Automation Friendly**: Add Webhooks for automatic issue creation and resolution
-- **API Access**: RESTful API for integration with other tools
+- **Issue Tracking**: Track build/test failures, release problems, and more in a centralized, extendable service.  
+- **CLI Integration**: Access and manage issues from your terminal or as a `kubectl` plugin.  
+- **Namespace Isolation**: Issues are scoped to Kubernetes namespaces for better security.  
+- **Automation-Friendly**: Supports webhooks for automatic issue creation and resolution.  
+- **API Access**: RESTful API for integration with external tools.  
 
-## Project Structure
+## Components
 
-The project is organized in a monorepo with these main components:
+This monorepo is structured around two primary components:
 
-- `packages/backend`: gin-gonic/gin server with PostgreSQL database
-- `packages/cli`: Go-based command-line tool (works as standalone or kubectl plugin)
+- `packages/backend`: A Go-based `gin-gonic` server with a PostgreSQL database.  
+- `packages/cli`: A Go-based CLI tool that can run standalone or as a `kubectl` plugin.  
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- [Go](https://golang.org/doc/install) v1.23 or later
-- [Make](https://www.gnu.org/software/make/)
-- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+To work with this project, ensure you have the following installed:
 
-## Setting Up Your Development Environment
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/konflux-ci/kite.git
-cd kite
-```
-
-### 2. Start Minikube
-
-```bash
-# Start a minikube cluster
-minikube start
-
-# Verify it's running
-minikube status
-```
-
-### 3. Generate kube-config.yaml
-
-For an easy setup process, Minikube is recommended as a local Kubernetes cluster.
-
-Once it's installed, ensure it's set as the current context:
-```bash
-kubectl config current-context
-minikube
-```
-
-If another value is returned, set minikube as the current context:
-```bash
-kubectl config set-context minikube
-Context "minikube" modified.
-```
-Next, run this script to generate the `kube-config.yaml` file for the backend service:
-```
-chmod +x scripts/generate-kubeconfig.sh
-./scripts/generate-kubeconfig.sh
-```
-
-This is used to talk to the cluster, allowing the service to perform actions like limiting issues by namespaces.
-
-### 4. Start the Development Environment with Docker Compose
-
-```bash
-# Build and start the services
-docker compose -f compose.yaml up -d --build
-
-# Check if services are running
-docker compose ps
-
-# Stop services when needed
-docker compose -f compose.yaml down -v
-```
-
-### 5. Build and Install the CLI Tool
-
-```bash
-# Build and install the CLI tool
-cd packages/cli
-make build
-make install
-# Optional kubectl plugin
-make kubectl-plugin
-
-# This will:
-# - Build the Go CLI binary
-# - Install it to ~/.local/bin/konflux-issues
-# - Set up the kubectl plugin
-```
-
-### 6. Access the Application
-
-- API: http://localhost:3000/health
+- [Docker](https://docs.docker.com/get-docker/) or [Podman](https://podman.io/docs/installation)  
+- [Go](https://golang.org/doc/install) v1.23 or later  
+- [Make](https://www.gnu.org/software/make/)  
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/) – for local development  
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) – for local development  
 

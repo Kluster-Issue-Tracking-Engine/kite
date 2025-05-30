@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -214,4 +215,14 @@ func GetEnvSliceOrDefault(key string, defaultValue []string) []string {
 		return strings.Split(value, ",")
 	}
 	return defaultValue
+}
+
+// GetEnvFileInCwd returns the full path to the given filename in project root directory
+func GetEnvFileInCwd(filename string) (string, error) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("failed to get working directory: %w", err)
+	}
+
+	return filepath.Join(cwd, filename), nil
 }

@@ -3,30 +3,37 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/joho/godotenv"
 	"github.com/konflux-ci/kite/internal/config"
 	handler_http "github.com/konflux-ci/kite/internal/handlers/http"
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
 	// Load environment variable
-	// TODO - Have this load ENV files using PROJECT_ENV value
-	if err := godotenv.Load(); err != nil {
-		// It's okay if .env file doesn't exist
-		fmt.Println("No .env file found, using system environment variables")
+	projectEnv := config.GetEnvOrDefault("PROJECT_ENV", "development")
+	fileName := fmt.Sprintf(".env.%s", projectEnv)
+	envFile, err := config.GetEnvFileInCwd(fileName)
+	if err != nil {
+		log.Printf("failed to get env file %s: %v", fileName, err)
+	}
+	if err := godotenv.Load(envFile); err != nil {
+		// It should be fine if the file doesn't exist
+		log.Printf("no %s file found, using system environment variables\n", envFile)
+	} else {
+		log.Printf("successfully loaded env file %s\n", envFile)
 	}
 
 	// Load configuration
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		fmt.Printf("Failed to load configuration: %w\n", err)
-		os.Exit(1)
+		log.Fatalf("Failed to load configuration: %v\n", err)
 	}
 
 	// Initialize logger
@@ -37,7 +44,7 @@ func main() {
 		"version":     getVersion(),
 	})
 
-	// Initialzie database
+	// Initialize database
 	db, err := config.InitDatabase()
 	if err != nil {
 		logger.WithError(err).Fatal("Failed to initialize database")
@@ -67,7 +74,7 @@ func main() {
 
 	// Lets start the server in a goroutine.
 	// This lets us run the server in this anonymous function concurrently
-	// while allowing main() to continue instead of blockign on ListenAndServe().
+	// while allowing main() to continue instead of blocking on ListenAndServe().
 	go func() {
 		logger.WithFields(logrus.Fields{
 			"address":     cfg.GetServerAddress(),

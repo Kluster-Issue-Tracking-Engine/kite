@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/konflux-ci/kite/internal/config"
 	"github.com/konflux-ci/kite/internal/seed"
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,9 +20,8 @@ func main() {
 		logger.Fatal("Seeder can only be used in the development environment")
 	}
 
-	// Try to load development ENV file (ignore error if file doesn't exist)
-	// This allows the seeder to work both locally and in containers
-	envFile := ".env.development"
+	// Try to load ENV file
+	envFile, err := config.GetEnvFileInCwd(".env.development")
 	if err := godotenv.Load(envFile); err != nil {
 		logger.WithError(err).Info("Could not load env file, using existing environment variables")
 	} else {

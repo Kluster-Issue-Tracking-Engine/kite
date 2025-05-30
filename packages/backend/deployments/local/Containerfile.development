@@ -1,0 +1,45 @@
+# Build stage
+FROM registry.redhat.io/rhel9/go-toolset
+
+USER root
+
+# Install development tools
+RUN dnf install -y git postgresql && \
+    curl -sSf https://atlasgo.sh | sh && \
+    dnf clean all
+
+RUN mkdir -p /opt/app-root/src && \
+    chown -R 1001:0 /opt/app-root
+
+# Switch to user 1001 for Go operations
+USER 1001
+
+WORKDIR /opt/app-root/src
+
+# Set Go environment variables for proper permissions
+ENV GOCACHE=/opt/app-root/.cache/go-build
+ENV GOPATH=/opt/app-root/go
+ENV PATH=$PATH:/opt/app-root/go/bin
+
+# Create cache directories with proper permissions
+RUN mkdir -p $GOCACHE $GOPATH/bin && \
+    chmod -R 755 $GOCACHE $GOPATH
+
+# Install Air for hot reloading
+RUN go install github.com/air-verse/air@latest
+
+# Copy go mod files first for better caching
+COPY --chown=1001:0 go.mod go.sum ./
+RUN go mod download
+
+# Copy source code (this will be overridden by volume mount in development)
+COPY --chown=1001:0 . .
+
+RUN chmod +x ./scripts/deploy/dev.sh
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl --fail --silent http://localhost:3000/health || exit 1
+
+ENTRYPOINT ["./scripts/deploy/dev.sh"]
