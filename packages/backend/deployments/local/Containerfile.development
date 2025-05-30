@@ -5,7 +5,6 @@ USER root
 
 # Install development tools
 RUN dnf install -y git postgresql && \
-    curl -sSf https://atlasgo.sh | sh && \
     dnf clean all
 
 RUN mkdir -p /opt/app-root/src && \
