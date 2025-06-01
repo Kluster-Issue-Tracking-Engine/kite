@@ -16,7 +16,7 @@ These issues might include:
 - Cluster-wide problems  
 
 Kite **does not** monitor cluster resources to detect these issues.  
-That responsibility is left to you, based on your specific environment.
+That responsibility is left to you, based on your specific situation and workflow.
 
 Instead, Kite acts as a **central information store**, offering the following features:
 
