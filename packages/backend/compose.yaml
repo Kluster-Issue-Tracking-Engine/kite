@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: deployments/local/Containerfile.development
     ports:
-      - "3000:3000"
+      - "8080:8080"
     volumes:
       # Mount source code for hot reloading
       - ./:/opt/app-root/src:Z
@@ -22,7 +22,7 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:2999/health"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/health"]
       interval: 19s
       timeout: 9s
       retries: 4

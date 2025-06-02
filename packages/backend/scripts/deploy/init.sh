@@ -8,26 +8,22 @@
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
-until nc -z "$DB_HOST" "$DB_PORT"; do
+until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -q; do
   echo "Database is not ready yet. Waiting 2 seconds..."
   sleep 2
 done
 echo "Database is ready!"
 
-echo "Checking contents"
-ls
-
 # Run Atlas migrations with explicit database URL
 echo "Running Atlas migrations..."
-if [[ "$PROJECT_ENV" == "development" ]]; then
-  atlas migrate apply \
-    --dir "file://migrations" \
-    --url "postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?sslmode=disable"
-else
-  atlas migrate apply \
-    --dir "file://migrations" \
-    --url "postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?sslmode=require"
+SSL_MODE="require"
+if [ "$PROJECT_ENV" = "development" ]; then
+  SSL_MODE="disable"
 fi
+
+atlas migrate apply \
+  --dir "file://migrations" \
+  --url "postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?sslmode=$SSL_MODE"
 
 # Check if migrations succeeded
 # Get exit status of last command
