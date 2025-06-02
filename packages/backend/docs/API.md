@@ -398,7 +398,7 @@ In case you missed in above, there is a short, [live demo](https://drive.google.
 ### Creating A Build Issue
 
 ```bash
-curl -X POST http://localhost:3000/api/v1/issues \
+curl -X POST http://localhost:8080/api/v1/issues \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Frontend build failed due to dependency conflict",
@@ -422,13 +422,13 @@ curl -X POST http://localhost:3000/api/v1/issues \
 ### Searching for Critical Issues
 
 ```bash
-curl "http://localhost:3000/api/v1/issues?namespace=team-alpha&severity=critical&state=ACTIVE"
+curl "http://localhost:8080/api/v1/issues?namespace=team-alpha&severity=critical&state=ACTIVE"
 ```
 
 ### Pipeline Failure Webhook
 
 ```bash
-curl -X POST "http://localhost:3000/api/v1/webhooks/pipeline-failure?namespace=team-alpha" \
+curl -X POST "http://localhost:8080/api/v1/webhooks/pipeline-failure?namespace=team-alpha" \
   -H "Content-Type: application/json" \
   -d '{
     "pipelineName": "frontend-deploy",
