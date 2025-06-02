@@ -12,17 +12,13 @@
 
 ## Overview
 
-The Konflux Issues API is a RESTful service for managing and tracking issues within Konflux CI/CD pipelines and components.
+The Konflux Issues API is a RESTful service for managing and tracking issues within Konflux CI/CD pipelines, components and external tooling.
 
-It provides endpoints for creating, reading, updating, and deleting issues, as well as webhook endpoints for automated issue management.
+It provides endpoints for creating, reading, updating, and deleting issues, as well as custom webhook endpoints for automated issue management.
 
 The goal of this project is for this service to be the backend to the Konflux Issues Dashboard.
 
 The Konflux Issues Dashboard will function like a car dashboard - a centralized place to view and monitor issues (Specifically issues related to building and shipping applications in Konflux).
-
-**Base URL:** `http://localhost:3000/api/v1` (development)
-**API Version:** v1
-**Content-Type:** `application/json`
 
 ## Authentication & Authorization
 

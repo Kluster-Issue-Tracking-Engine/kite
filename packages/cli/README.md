@@ -121,7 +121,3 @@ go test ./...
 # Install locally
 go install
 ```
-
-## License
-
-MIT
