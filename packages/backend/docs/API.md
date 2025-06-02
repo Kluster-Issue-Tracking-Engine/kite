@@ -361,7 +361,6 @@ Handle pipeline failure events and create issues automatically.
 **Behavior:**
 - Creates a new issue with `issueType: "pipeline"` and `severity: "major"`
 - If a duplicate issue exists for the same pipeline/namespace, updates the existing issue
-- Automatically generates links to pipeline logs
 
 #### POST /api/v1/webhooks/pipeline-success
 Handle pipeline success events and resolve related issues.
