@@ -2,12 +2,17 @@
 FROM registry.redhat.io/rhel9/go-toolset@sha256:e0ad156b08e0b50ad509d79513e13e8a31f2812c66e9c48c98cea53420ec2bca AS builder
 
 # Metadata
-LABEL io.k8s.description="Konflux Issues API Server" \
+LABEL name="KITE" \
       io.k8s.display-name="Konflux Issues API" \
-      io.openshift.expose-services="8080:http" \
-      io.openshift.tags="konflux,issues,api,golang" \
+      com.redhat.component="kite" \
+      version="1" \
+      io.k8s.description="Konflux Issues API Server" \
+      summary="Issue tracking service for Konflux" \
+      distribution-scope="private" \
+      url="https://github.com/konflux-ci/kite" \
       org.opencontainers.image.source="https://github.com/konflux-ci/kite" \
-      org.opencontainers.image.version="v1.0.0" \
+      io.openshift.expose-services="8080:http" \
+      io.openshift.tags="konflux,issues,api,golang,kite" \
       maintainer="CUE Team"
 
 # Root user to install dependencies

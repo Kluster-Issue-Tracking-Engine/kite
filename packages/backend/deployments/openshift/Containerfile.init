@@ -2,9 +2,17 @@
 FROM registry.redhat.io/ubi9/ubi-minimal@sha256:92b1d5747a93608b6adb64dfd54515c3c5a360802db4706765ff3d8470df6290
 
 # Metadata
-LABEL io.k8s.description="Konflux Issues Database Migration" \
-      io.k8s.display-name="Konflux Issues DB Init" \
-      io.openshift.tags="konflux,database,migration,kite"
+LABEL name="KITE DB Init" \
+      com.redhat.component="kite-init" \
+      version="1" \
+      io.k8s.display-name="KITE DB Init" \
+      io.k8s.description="Database Migration Init container for KITE" \
+      summary="Database Migration Init container for KITE" \
+      distribution-scope="private" \
+      url="https://github.com/konflux-ci/kite" \
+      org.opencontainers.image.source="https://github.com/konflux-ci/kite" \
+      io.openshift.tags="konflux,database,migration,kite" \
+      maintainer="CUE Team"
 
 USER root
 
