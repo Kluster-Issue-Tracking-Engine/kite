@@ -42,7 +42,7 @@ chmod +x scripts/dev/generate-kubeconfig.sh
 
 This is used by the service to talk to the cluster, allowing it to perform actions like limiting issues by namespaces.
 
-### 4. Start the Development Environment with <Docker|Podman> Compose
+### 4. Start the Development Environment with Docker or Podman Compose
 
 ```bash
 # Build and start the services
