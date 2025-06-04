@@ -17,7 +17,7 @@ import (
 
 func main() {
 	// Load environment variable
-	projectEnv := config.GetEnvOrDefault("PROJECT_ENV", "development")
+	projectEnv := config.GetEnvOrDefault("KITE_PROJECT_ENV", "development")
 	fileName := fmt.Sprintf(".env.%s", projectEnv)
 	envFile, err := config.GetEnvFileInCwd(fileName)
 	if err != nil {
@@ -113,7 +113,7 @@ func setupLogger() *logrus.Logger {
 	logger := logrus.New()
 
 	// Set log level
-	logLevel := config.GetEnvOrDefault("LOG_LEVEL", "info")
+	logLevel := config.GetEnvOrDefault("KITE_LOG_LEVEL", "info")
 	level, err := logrus.ParseLevel(logLevel)
 	if err != nil {
 		level = logrus.InfoLevel
@@ -121,7 +121,7 @@ func setupLogger() *logrus.Logger {
 	logger.SetLevel(level)
 
 	// Set log format
-	if config.GetEnvOrDefault("PROJECT_ENV", "development") == "production" {
+	if config.GetEnvOrDefault("KITE_PROJECT_ENV", "development") == "production" {
 		logger.SetFormatter(&logrus.JSONFormatter{})
 	} else {
 		logger.SetFormatter(&logrus.TextFormatter{

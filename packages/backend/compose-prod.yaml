@@ -1,14 +1,13 @@
+# This file is used to ensure that the Prod container boots without any issues.
 services:
   app:
     env_file: .env.development
     build:
       context: .
-      dockerfile: deployments/local/Containerfile.development
+      dockerfile: deployments/openshift/Containerfile.production
     ports:
       - "8080:8080"
     volumes:
-      # Mount source code for hot reloading
-      - ./:/opt/app-root/src:Z
       - ./configs/kube-config.yaml:/app/configs/kube-config.yaml:ro
       # Exclude build artifacts
       - /opt/app-root/src/tmp
@@ -32,7 +31,7 @@ services:
     env_file: .env.development
     build:
       context: .
-      dockerfile: deployments/local/Containerfile.init
+      dockerfile: deployments/openshift/Containerfile.init
     depends_on:
       db:
         condition: service_healthy

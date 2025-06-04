@@ -24,12 +24,12 @@ type DatabaseConfig struct {
 // Returns the database configuration using ENV variables. Uses defaults if ENV variables are not found.
 func GetDatabaseConfig() *DatabaseConfig {
 	return &DatabaseConfig{
-		Host:     getEnvOrDefault("DB_HOST", "localhost"),
-		Port:     getEnvOrDefault("DB_PORT", "5432"),
-		User:     getEnvOrDefault("DB_USER", "postgres"),
-		Password: getEnvOrDefault("DB_PASSWORD", "postgres"),
-		Name:     getEnvOrDefault("DB_NAME", "issuesdb"),
-		SSLMode:  getEnvOrDefault("DB_SSL_MODE", "disable"),
+		Host:     getEnvOrDefault("KITE_DB_HOST", "localhost"),
+		Port:     getEnvOrDefault("KITE_DB_PORT", "5432"),
+		User:     getEnvOrDefault("KITE_DB_USER", "postgres"),
+		Password: getEnvOrDefault("KITE_DB_PASSWORD", "postgres"),
+		Name:     getEnvOrDefault("KITE_DB_NAME", "issuesdb"),
+		SSLMode:  getEnvOrDefault("KITE_DB_SSL_MODE", "disable"),
 	}
 }
 

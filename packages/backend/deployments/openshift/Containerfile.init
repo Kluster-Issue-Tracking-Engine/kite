@@ -1,0 +1,37 @@
+# The purpose of this container is to initialize the database.
+FROM registry.redhat.io/ubi9/ubi-minimal@sha256:92b1d5747a93608b6adb64dfd54515c3c5a360802db4706765ff3d8470df6290
+
+# Metadata
+LABEL name="KITE DB Init" \
+      com.redhat.component="kite-init" \
+      version="1" \
+      io.k8s.display-name="KITE DB Init" \
+      io.k8s.description="Database Migration Init container for KITE" \
+      summary="Database Migration Init container for KITE" \
+      distribution-scope="private" \
+      url="https://github.com/konflux-ci/kite" \
+      org.opencontainers.image.source="https://github.com/konflux-ci/kite" \
+      io.openshift.tags="konflux,database,migration,kite" \
+      maintainer="CUE Team"
+
+USER root
+
+WORKDIR /opt/app-root/src
+
+RUN microdnf install -y postgresql && \
+
+    curl -sSf https://atlasgo.sh | sh && \
+    microdnf clean all && \
+    rm -rf /var/cache/yum
+
+# Atlas config, migrations and entrypoint
+COPY atlas.hcl .
+COPY migrations/ ./migrations/
+COPY scripts/deploy/init.sh entrypoint.sh
+RUN chmod -R g=u . && \
+    chmod +x entrypoint.sh
+
+# Set non-root user
+USER 1001
+
+ENTRYPOINT [ "./entrypoint.sh" ]
