@@ -4,7 +4,7 @@
 migrate:
 	atlas migrate apply --env local
 
-# Seed database
+# Seed database (non-prod DBs)
 seed:
 	go run -mod=mod cmd/seed/main.go
 
@@ -13,6 +13,6 @@ status:
 	atlas migrate status --env local
 
 # Generate a new migration (requires NAME variable)
-# Usage: make migraiton NAME="add_some_column"
+# Usage: make migration NAME="add_some_column"
 migration:
 	atlas migrate diff "$(NAME)" --env local
