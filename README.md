@@ -39,7 +39,9 @@ This monorepo is structured around two primary components:
 
 This service is flexible enough to accommodate various workflows and scenarios.
 
-Please see the [API docs](./packages/backend/docs/API.md) for more information.
+Please see the following docs for more information:
+- [API](./packages/backend/docs/API.md)
+- [Service Integration](./packages/backend/docs/ServiceIntegration.md)
 
 ## Prerequisites
 
