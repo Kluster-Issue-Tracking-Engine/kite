@@ -1,0 +1,7 @@
+---
+metadata:
+  version: "1.0"
+artifacts:
+  - download_url: "https://release.ariga.io/atlas/atlas-linux-amd64-v0.35.0"
+    checksum: "sha256:8e8e9b256498c58bdfc96211942402632e12151ec87dd0f9153294f56f2879e6"
+    filename: "atlas"
