@@ -87,8 +87,8 @@ func (h *WebhookHandler) PipelineFailure(c *gin.Context) {
 		updateReq := dto.UpdateIssueRequest{
 			Title:       &issueData.Title,
 			Description: &issueData.Description,
-			Severity:    &issue.Severity,
-			IssueType:   &issue.IssueType,
+			Severity:    &issueData.Severity,
+			IssueType:   &issueData.IssueType,
 			Links:       issueData.Links,
 		}
 		issue, err = h.issueService.UpdateIssue(c.Request.Context(), duplicateResult.ExistingIssue.ID, updateReq)
