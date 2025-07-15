@@ -60,7 +60,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
     -o server cmd/server/main.go
 
 # Runtime stage - absolute minimal RHEL
-FROM registry.redhat.io/ubi9/ubi-micro@sha256:e62298fb53f7c510aa9c9e8b3cde34f5382648677339943d91609571453baaab
+FROM registry.redhat.io/ubi9/ubi-micro@sha256:233cce2df15dc7cd790f7f1ddbba5d4f59f31677c13a47703db3c2ca2fea67b6
 
 WORKDIR /opt/app-root/src
 
