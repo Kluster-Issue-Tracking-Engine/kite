@@ -86,19 +86,46 @@ An **issue** represents a problem or concern in the system. This problem can be 
 
 ### Health & System
 
-#### GET /health
+#### GET /api/v1/health/
 Returns service health status.
 
 **Response:**
 ```json
 {
   "status": "UP",
-  "message": "Service is healthy",
-  "timestamp": "2025-01-01T12:00:00Z"
+  "message": "All systems operational",
+  "timestamp": "2025-07-31T17:12:07.741010936Z",
+  "components": {
+    "api": {
+      "status": "UP",
+      "message": "API server is responding",
+      "details": {
+        "version": "0.0.1"
+      }
+    },
+    "database": {
+      "status": "UP",
+      "message": "Database connection successful",
+      "details": {
+        "connection_status": "Healthy",
+        "response_time_seconds": 0.000405068,
+        "open_connections": 1,
+        "idle_connections": 1,
+        "max_open_connections": 100
+      }
+    },
+    "response_time": {
+      "status": "UP",
+      "message": "Response time measurement",
+      "details": {
+        "duration_seconds": 0.000420555
+      }
+    }
+  }
 }
 ```
 
-#### GET /version
+#### GET /api/v1/version
 Returns service version information.
 
 **Response:**

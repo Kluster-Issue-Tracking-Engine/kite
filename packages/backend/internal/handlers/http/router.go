@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	kiteConf "github.com/konflux-ci/kite/internal/config"
 	"github.com/konflux-ci/kite/internal/middleware"
 	"github.com/konflux-ci/kite/internal/repository"
 	"github.com/konflux-ci/kite/internal/services"
@@ -10,7 +11,7 @@ import (
 )
 
 func SetupRouter(db *gorm.DB, logger *logrus.Logger) (*gin.Engine, error) {
-	// Set Gin mode based on environmetn
+	// Set Gin mode based on environment
 	if gin.Mode() == gin.DebugMode {
 		gin.SetMode(gin.DebugMode)
 	} else {
@@ -39,17 +40,6 @@ func SetupRouter(db *gorm.DB, logger *logrus.Logger) (*gin.Engine, error) {
 	if err != nil {
 		logger.WithError(err).Warn("Failed to initialize namespace checker")
 	}
-
-	// Health and version endpoints
-	router.GET("/health", middleware.HealthCheck(logger))
-	router.GET("/version", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"version":     "1.0.0",
-			"name":        "Konflux Issues API",
-			"description": "API for managing issues in Konflux",
-		})
-	})
-
 	// API v1 routes
 	v1 := router.Group("/api/v1")
 
@@ -78,6 +68,19 @@ func SetupRouter(db *gorm.DB, logger *logrus.Logger) (*gin.Engine, error) {
 		webhooksGroup.POST("/pipeline-failure", webhookHandler.PipelineFailure)
 		webhooksGroup.POST("/pipeline-success", webhookHandler.PipelineSuccess)
 	}
+
+	// Health and version endpoints
+	healthGroup := v1.Group("/health")
+	healthGroup.GET("/", NewHealthHandler(db, logger))
+
+	versionGroup := v1.Group("/version")
+	versionGroup.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"name":        "Konflux Issues Dashboard API",
+			"description": "The backend service that powers the Konflux Issues Dashboard",
+			"version":     kiteConf.GetEnvOrDefault("KITE_VERSION", "0.0.1"),
+		})
+	})
 
 	return router, nil
 }
