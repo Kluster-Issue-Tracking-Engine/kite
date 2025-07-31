@@ -1,5 +1,5 @@
 # Build stage - use go toolset
-FROM registry.redhat.io/rhel9/go-toolset@sha256:381fb72f087a07432520fa93364f66b5981557f1dd708f3c4692d6d0a76299b3 AS builder
+FROM registry.redhat.io/rhel9/go-toolset@sha256:3ce6311380d5180599a3016031a9112542d43715244816d1d0eabc937952667b AS builder
 
 # Metadata
 LABEL name="KITE" \
@@ -60,7 +60,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
     -o server cmd/server/main.go
 
 # Runtime stage - absolute minimal RHEL
-FROM registry.redhat.io/ubi9/ubi-micro@sha256:ef76ed20e66a9b19ccbbafe5657d73246c78c8f06ef3161e0fce6831ed4f7352
+FROM registry.redhat.io/ubi9/ubi-micro@sha256:666b64ba2670d356b03dd977fe1931c35fd624add9d8ef57e9dbd8f2a47118ba
 
 WORKDIR /opt/app-root/src
 
