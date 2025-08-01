@@ -1,6 +1,7 @@
 # This file is used to ensure that the Prod container boots without any issues.
 services:
   app:
+    container_name: kite_app
     env_file: .env.development
     build:
       context: .
@@ -21,13 +22,14 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/health"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/api/v1/health/"]
       interval: 19s
       timeout: 9s
       retries: 4
       start_period: 30s
 
   migrator:
+    container_name: kite_migrator
     env_file: .env.development
     build:
       context: .
@@ -37,6 +39,7 @@ services:
         condition: service_healthy
 
   db:
+    container_name: kite_db
     image: registry.redhat.io/rhel9/postgresql-15
     environment:
       POSTGRESQL_USER: kite

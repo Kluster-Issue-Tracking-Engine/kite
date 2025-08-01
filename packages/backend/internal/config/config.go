@@ -56,7 +56,7 @@ func LoadConfig() (*Config, error) {
 			Host:            GetEnvOrDefault("KITE_HOST", "0.0.0.0"),
 			Port:            getEnvOrDefault("KITE_PORT", "8080"),
 			ReadTimeout:     GetEnvDurationOrDefault("KITE_READ_TIMEOUT", 30*time.Second),
-			WriteTimeout:    GetEnvDurationOrDefault("KITE_WRITE_TIMEOUT", 39*time.Second),
+			WriteTimeout:    GetEnvDurationOrDefault("KITE_WRITE_TIMEOUT", 30*time.Second),
 			IdleTimeout:     GetEnvDurationOrDefault("KITE_IDLE_TIMEOUT", 60*time.Second),
 			ShutdownTimeout: GetEnvDurationOrDefault("KITE_SHUTDOWN_TIMEOUT", 10*time.Second),
 			Environment:     getEnvOrDefault("KITE_PROJECT_ENV", "production"),
@@ -112,7 +112,7 @@ func (c *Config) Validate() error {
 			c.Server.Environment, strings.Join(validEnvs, ", "))
 	}
 
-	// Validate databse configuration (TODO)
+	// Validate database configuration
 	if c.Database.Host == "" {
 		return fmt.Errorf("database host is required")
 	}

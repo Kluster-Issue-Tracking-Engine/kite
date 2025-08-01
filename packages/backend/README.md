@@ -59,7 +59,7 @@ This is used by the service to talk to the cluster, allowing it to perform actio
 
 ### 5. Access the Application
 
-- API: http://localhost:8080/health
+- API: http://localhost:8080/api/v1/health/
 
 ## Migrations
 
