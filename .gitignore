@@ -12,6 +12,9 @@ pgdata_dev/
 *.swo
 *~
 
+# External dependencies
+packages/backend/vendor/
+# Generated Kubeconfig file
 packages/backend/configs/kube-config.yaml
-
+# Generated binary
 packages/cli/konflux-issues
