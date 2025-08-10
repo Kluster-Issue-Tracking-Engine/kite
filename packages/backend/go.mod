@@ -1,9 +1,11 @@
 module github.com/konflux-ci/kite
 
-go 1.23.6
+go 1.24
+
+toolchain go1.24.4
 
 require (
-	ariga.io/atlas-provider-gorm v0.5.4
+	ariga.io/atlas-provider-gorm v0.5.5
 	github.com/gin-gonic/gin v1.10.1
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
@@ -17,7 +19,7 @@ require (
 )
 
 require (
-	ariga.io/atlas-go-sdk v0.7.2 // indirect
+	ariga.io/atlas v0.36.2-0.20250801020723-2aaaf0682dd9 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/bytedance/sonic v1.14.0 // indirect
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
