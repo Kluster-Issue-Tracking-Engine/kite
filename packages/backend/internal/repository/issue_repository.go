@@ -165,8 +165,8 @@ func (i *issueRepository) findDuplicateInTx(tx *gorm.DB, req dto.IssuePayload) (
 	// Doc: https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS
 	err := tx.Preload("Links").
 		Joins("JOIN issue_scopes on issues.scope_id = issue_scopes.id").
-		Where("issues.namespace = ? AND issues.issue_type = ? AND issues.state = ?",
-			req.GetNamespace(), req.GetIssueType(), models.IssueStateActive).
+		Where("issues.namespace = ? AND issues.issue_type = ? AND issues.state IN ?",
+			req.GetNamespace(), req.GetIssueType(), []models.IssueState{models.IssueStateActive, models.IssueStateResolved}).
 		Where("issue_scopes.resource_type = ? AND issue_scopes.resource_name = ? AND issue_scopes.resource_namespace = ?",
 			req.GetScope().GetResourceType(), req.GetScope().GetResourceName(), req.GetNamespace()).
 		Set("gorm:query_option", "FOR UPDATE").
