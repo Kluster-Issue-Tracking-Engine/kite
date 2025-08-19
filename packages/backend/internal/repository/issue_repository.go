@@ -231,13 +231,15 @@ func (i *issueRepository) FindAll(ctx context.Context, filters IssueQueryFilters
 	if filters.State != nil {
 		query = query.Where("state = ?", *filters.State)
 	}
-	if filters.ResourceType != "" {
-		query = query.Joins("JOIN issue_scopes ON issues.scope_id = issue_scopes.id").
-			Where("issue_scopes.resource_type = ?", filters.ResourceType)
-	}
-	if filters.ResourceName != "" {
-		query = query.Joins("JOIN issue_scopes ON issues.scope_id = issue_scopes.id").
-			Where("issue_scopes.resource_name = ?", filters.ResourceName)
+	// Join issue_scopes once if any scope-related filter is present, then stack WHEREs
+	if filters.ResourceType != "" || filters.ResourceName != "" {
+		query = query.Joins("JOIN issue_scopes ON issues.scope_id = issue_scopes.id")
+		if filters.ResourceType != "" {
+			query = query.Where("issue_scopes.resource_type = ?", filters.ResourceType)
+		}
+		if filters.ResourceName != "" {
+			query = query.Where("issue_scopes.resource_name = ?", filters.ResourceName)
+		}
 	}
 	if filters.Search != "" {
 		searchPattern := "%" + filters.Search + "%"
