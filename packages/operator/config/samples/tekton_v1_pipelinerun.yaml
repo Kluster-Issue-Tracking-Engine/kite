@@ -1,0 +1,27 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: simple-pipeline
+  namespace: tekton-pipelines
+spec:
+  tasks:
+  - name: echo-task
+    taskSpec:
+      steps:
+      - image: busybox
+        name: echo-message
+        script: |
+          #!/bin/sh
+          echo "Hello, Tekton!"
+          exit 1
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 3000
+          seccompProfile:
+            type: "RuntimeDefault"
+---

@@ -5,10 +5,8 @@
 - [Authentication & Authorization](#authentication--authorization)
 - [Data Models](#data-models)
 - [API Endpoints](#api-endpoints)
-- [Webhooks](#webhooks)
-- [Usage Examples](#usage-examples)
 
-> **NOTE**: This API doc is temporary and will be auto-generated in the future.
+---
 
 ## Overview
 
@@ -20,9 +18,13 @@ The goal of this project is for this service to be the backend to the Konflux Is
 
 The Konflux Issues Dashboard will function like a car dashboard - a centralized place to view and monitor issues (Specifically issues related to building and shipping applications in Konflux).
 
+---
+
 ## Authentication & Authorization
 
-The API will use Kubernetes RBAC for namespace-based access control. Users must have access to the Kubernetes namespace to interact with issues in that namespace.
+The API will use Kubernetes RBAC for namespace-based access control (**Work In Progress**). Users must have access to the Kubernetes namespace to interact with issues in that namespace.
+
+---
 
 ## Data Models
 
@@ -81,6 +83,8 @@ An **issue** represents a problem or concern in the system. This problem can be 
 **State:**
 - `ACTIVE` - Issue is currently active/unresolved
 - `RESOLVED` - Issue has been resolved
+
+---
 
 ## API Endpoints
 
@@ -343,10 +347,3 @@ Remove a relationship between issues.
 - `relatedId` (required) - Target issue UUID
 
 **Response:** `204 No Content`
-
----
-
-## Webhooks
-
-On top of the base API, custom webhook endpoints can be created for automatic issue creation and resolving based on your situation or workflow.
-Please see the [Service Integration Guide](./ServiceIntegration.md) for more information.
