@@ -43,9 +43,9 @@ type PipelineSuccessPayload struct {
 func NewKiteClient(baseURL string, logger *logrus.Logger) *KiteClient {
 	// Check if we should skip TLS verification (for local development ONLY)
 	skipTLS := false
-	if skipTLSEnv := os.Getenv("KITE_SKIP_TLS_VERIFY"); skipTLSEnv != "" {
-		if skip, err := strconv.ParseBool(skipTLSEnv); err == nil {
-			skipTLS = skip
+	if val := os.Getenv("ENABLE_HTTP2"); val != "" {
+		if enableHTTP2, err := strconv.ParseBool(val); err == nil {
+			skipTLS = !enableHTTP2
 		}
 	}
 
@@ -62,7 +62,7 @@ func NewKiteClient(baseURL string, logger *logrus.Logger) *KiteClient {
 	}
 
 	if skipTLS {
-		logger.Warn("TLS certificate verification is disabled for KITE client (KITE_SKIP_TLS_VERIFY=true)")
+		logger.Warn("TLS certificate verification is disabled for KITE client (ENABLE_HTTP2=false)")
 	}
 
 	return &KiteClient{
