@@ -1,27 +1,43 @@
-# Service Integration Guide
+# Webhooks
 
-This guide explains how external services can integrate with Kite to automatically create and resolve issues based on their workflows.
+## Table of Contents
+
+- [Overview](#overview)
+- [Custom Webhook Endpoints](#custom-webhook-endpoints)
+  - [Example Webhook Endpoints](#example-webhook-endpoints)
+    - [Pipeline Failure Webhook](#pipeline-failure-webhook)
+    - [Pipeline Success Webhook](#pipeline-success-webhook)
+- [Creating Custom Webhook Endpoints](#creating-custom-webhook-endpoints)
+  - [Example: Build Failure](#example-build-failure)
+  - [Example: Deployment Failure](#example-deployment-failure)
+  - [Example: Security Scan Failure](#example-security-scan-failure)
+- [Issue Grouping with Scope Objects](#issue-grouping-with-scope-objects)
+  - [Scope Object Structure](#scope-object-structure)
+  - [Common Resource Types](#common-resource-types)
+  - [How Grouping Works](#how-grouping-works)
+  - [Benefits of Scope-Based Grouping](#benefits-of-scope-based-grouping)
+  - [Automatic Issue Resolution (via custom webhooks)](#automatic-issue-resolution-via-custom-webhooks)
+- [Developing Custom Webhooks](#developing-custom-webhooks)
 
 ## Overview
-
 Kite allows any service that can send HTTP requests to create and manage issues
 
-There are two main ways to integrate:
-1. **Direct API Integration** - Use the standard REST API endpoints
-2. **Custom Webhook Endpoints** - Request and use specialized webhook endpoints for specific workflows
+There are two main ways to send requests:
+1. **Standard Issues API** - Use the standard REST API endpoints
+2. **Custom Webhook Endpoints** - Develop and use specialized webhook endpoints that are customized for your use case.
+
+---
 
 ## Custom Webhook Endpoints
 
-Webhook endpoints provide a simple way to integrate common workflows. They handle the complexity of issue creation, duplicate checking and automatic resolution.
+Webhook endpoints provide a simple way to create and resolve issues. They handle the complexity of issue creation, duplicate checking and automatic resolution.
 
 ### Example Webhook endpoints
-
-The following are example webhook endpoints for pipeline failures. There is a short, [live demo](https://drive.google.com/file/d/19a5j_hOxEY0r2wcchGdbLAEDfatDKnXB/view?usp=sharing) if you're interested in seeing them in action.
-
+The following example shows webhook endpoints for Tekton Pipeline failures and successes.
 #### Pipeline Failure Webhook
 **Endpoint**: `POST /api/v1/webhooks/pipeline-failure`
 
-Creates issues when pipelines fail. Automatically handles duplicate checking and updates existing issues.
+Creates issues when pipelines fail. Automatically handles duplicate checking and updates existing issues related to that pipeline failure.
 
 **Request Payload**:
 ```json
@@ -74,6 +90,8 @@ Internally the issue generated from that payload looks something like this:
 }
 ```
 
+---
+
 ### Pipeline Success Webhook
 **Endpoint**: `POST /api/v1/webhooks/pipeline-success`
 Automatically resolves pipeline issues when pipelines succeed.
@@ -87,7 +105,7 @@ Automatically resolves pipeline issues when pipelines succeed.
 ```
 
 **What it does**:
-- Finds all active issues related to the specified `pipelineName`
+- Finds all active issues related to the specified `pipelineName` in `namespace` "team-alpha"
 - Marks them as "RESOLVED"
 - Sets the resolution timestamp
 
@@ -125,8 +143,12 @@ After hitting this endpoint, the issue created from the failure endpoint will be
 }
 ```
 
+---
+
 ## Creating Custom Webhook Endpoints
-You can request custom webhook endpoints for your specific workflow. Here are some example endpoints and payloads:
+You can create custom webhook endpoints for your specific workflow that augment the standard Issues payload shown in the [API](./API.md) docs.
+
+Here are some example endpoints and payloads:
 
 ### Example: Build Failure
 ```json
@@ -140,6 +162,8 @@ You can request custom webhook endpoints for your specific workflow. Here are so
 }
 ```
 
+---
+
 ### Example: Deployment Failure
 ```json
 // POST /api/v1/webhooks/deployment-failure
@@ -152,6 +176,8 @@ You can request custom webhook endpoints for your specific workflow. Here are so
 }
 ```
 
+---
+
 ### Example: Security Scan Failure
 ```json
 // POST /api/v1/webhooks/security-scan-failure
@@ -163,6 +189,8 @@ You can request custom webhook endpoints for your specific workflow. Here are so
   "reportUrl": "https://security.com/reports/321"
 }
 ```
+
+---
 
 ## Issue Grouping with Scope Objects
 The `scope` object is the key to how Kite groups and manages related issues. It defines what resource an issue is related to.
@@ -182,6 +210,8 @@ The `scope` object is the key to how Kite groups and manages related issues. It 
 - `application` - Issues with entire applications
 - `workspace` - Issues affecting workspaces
 - `environment` - Environment-specific issues
+
+---
 
 ### How grouping works
 
@@ -211,12 +241,16 @@ Issues with the same scope are considered related:
 }
 ```
 
+---
+
 ### Benefits of Scope-Based Grouping
 
 - **Prevents Duplicates** - Won't create multiple active issues for the same resource
 - **Easy Filtering** - Find all issues for a specific component or application
 - **Automatic Resolution** - Resolve all issues for a resource when it's fixed
 - **Better Organization** - Issues are naturally organized by what they affect
+
+---
 
 ### Automatic Issue Resolution (via custom webhooks):
 
@@ -412,12 +446,14 @@ When the pipeline with the name `frontend-build` passes, both these issues shoul
 }
 ```
 
-### Requesting Custom Webhooks
-To request a custom webhook endpoint for your service:
+---
+
+### Developing Custom Webhooks
+To develop a custom webhook endpoint for your use case:
 1. **Identify Your Workflow** - What events do you want to track?
 2. **Define the Scope** - What resources are affected by these events?
 3. **Specify the Data** - What information needs to be captured?
-4. **Plan Resolution** - How will issues be automatically resolved?
+4. **Plan Resolution** - How will issues be automatically resolved? (this should be handled in the [custom controller](../../operator/docs/ControllerDevelopmentGuide.md) for your resource)
 
 Here is a template to help with the request:
 ```markdown
@@ -454,147 +490,4 @@ Here is a template to help with the request:
 
 ```
 
-### Practical examples
-#### CI/CD Pipeline Integration:
-```yaml
-# Tekton Task example
-apiVersion: tekton.dev/v1beta1
-kind: Task
-metadata:
-  name: notify-kite
-spec:
-  params:
-    - name: pipeline-name
-    - name: status
-    - name: failure-reason
-  steps:
-    - name: notify
-      image: curlimages/curl
-      script: |
-        if [ "$(params.status)" = "Failed" ]; then
-          curl -X POST http://kite-api/api/v1/webhooks/pipeline-failure \
-            -H "Content-Type: application/json" \
-            -d '{
-              "pipelineName": "$(params.pipeline-name)",
-              "namespace": "$(context.taskRun.namespace)",
-              "failureReason": "$(params.failure-reason)"
-            }'
-        else
-          curl -X POST http://kite-api/api/v1/webhooks/pipeline-success \
-            -H "Content-Type: application/json" \
-            -d '{
-              "pipelineName": "$(params.pipeline-name)",
-              "namespace": "$(context.taskRun.namespace)"
-            }'
-        fi
-```
-
-#### Codebase integration
-
-**Python**:
-```python
-import requests
-
-def notify_kite_build_status(component_name, namespace, status, build_id, error_msg=None):
-    base_url = "http://kite-api/api/v1/webhooks"
-
-    if status == "failed":
-        response = requests.post(f"{base_url}/build-failure", json={
-            "componentName": component_name,
-            "namespace": namespace,
-            "buildId": build_id,
-            "errorMessage": error_msg,
-            "buildLogsUrl": f"https://builds.com/logs/{build_id}"
-        })
-    else:
-        response = requests.post(f"{base_url}/build-success", json={
-            "componentName": component_name,
-            "namespace": namespace
-        })
-
-    return response.status_code == 200
-```
-
-**Go**:
-```golang
-// KiteClient handles integration with Kite API
-type KiteClient struct {
-	baseURL    string
-	httpClient *http.Client
-}
-
-// NewKiteClient creates a new Kite API client
-func NewKiteClient(baseURL string) *KiteClient {
-	return &KiteClient{
-		baseURL: baseURL,
-		httpClient: &http.Client{
-			Timeout: 30 * time.Second,
-		},
-	}
-}
-
-// Build webhook request structures
-type BuildFailureRequest struct {
-	ComponentName string `json:"componentName"`
-	Namespace     string `json:"namespace"`
-	BuildID       string `json:"buildId"`
-	ErrorMessage  string `json:"errorMessage"`
-	BuildLogsURL  string `json:"buildLogsUrl,omitempty"`
-}
-
-type BuildSuccessRequest struct {
-	ComponentName string `json:"componentName"`
-	Namespace     string `json:"namespace"`
-}
-
-// Generic webhook response
-type WebhookResponse struct {
-	Status  string      `json:"status"`
-	Message string      `json:"message,omitempty"`
-	Issue   interface{} `json:"issue,omitempty"`
-}
-
-// ReportBuildFailure reports a build failure to Kite
-func (k *KiteClient) ReportBuildFailure(ctx context.Context, req BuildFailureRequest) error {
-	endpoint := fmt.Sprintf("%s/api/v1/webhooks/build-failure?namespace=%s", k.baseURL, req.Namespace)
-
-	var response WebhookResponse
-	if err := k.makeRequest(ctx, "POST", endpoint, req, &response); err != nil {
-		return fmt.Errorf("failed to report build failure: %w", err)
-	}
-
-	log.Printf("Build failure reported successfully for component: %s", req.ComponentName)
-	return nil
-}
-
-// ReportBuildSuccess reports a build success to Kite
-func (k *KiteClient) ReportBuildSuccess(ctx context.Context, req BuildSuccessRequest) error {
-	endpoint := fmt.Sprintf("%s/api/v1/webhooks/build-success?namespace=%s", k.baseURL, req.Namespace)
-
-	var response WebhookResponse
-	if err := k.makeRequest(ctx, "POST", endpoint, req, &response); err != nil {
-		return fmt.Errorf("failed to report build success: %w", err)
-	}
-
-	log.Printf("Build success reported successfully for component: %s", req.ComponentName)
-	return nil
-}
-
-// NotifyBuildStatus reports build status to Kite based on success/failure
-func (k *KiteClient) NotifyBuildStatus(ctx context.Context, componentName, namespace, buildID string, success bool, errorMessage, logsURL string) error {
-	if success {
-		return k.ReportBuildSuccess(ctx, BuildSuccessRequest{
-			ComponentName: componentName,
-			Namespace:     namespace,
-		})
-	}
-
-	return k.ReportBuildFailure(ctx, BuildFailureRequest{
-		ComponentName: componentName,
-		Namespace:     namespace,
-		BuildID:       buildID,
-		ErrorMessage:  errorMessage,
-		BuildLogsURL:  logsURL,
-	})
-}
-```
+---
