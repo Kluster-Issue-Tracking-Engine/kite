@@ -8,20 +8,28 @@ spec:
   tasks:
   - name: echo-task
     taskSpec:
+      stepTemplate:
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          runAsUser: 1000
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
       steps:
-      - image: busybox
-        name: echo-message
+      - name: echo-message
+        image: busybox:1.36
         script: |
           #!/bin/sh
           echo "Hello, Tekton!"
-          exit 1
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 3000
-          seccompProfile:
-            type: "RuntimeDefault"
+          exit 0
 ---
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: simple-pipeline-run
+  namespace: tekton-pipelines
+spec:
+  pipelineRef:
+    name: simple-pipeline

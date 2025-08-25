@@ -7,6 +7,7 @@ You'll then modify the Pipeline manifest so it succeeds and see the operator res
 
 ## Requirements
 - [Tekton](https://tekton.dev/docs/installation/) and [Tekton CLI](https://tekton.dev/docs/cli/) installed
+  - You have the `tekton-pipelines` namespace on your cluster
 - A local instance of the [Kite backend service](../backend/README.md) running on `localhost:8080`
 
 ## Run the Demo
@@ -26,9 +27,15 @@ make run
 kubectl apply -k config/samples/
 ```
 
-4. **Run the sample Pipeline:**
+4. **Verify PipelineRun finished and failed:**
 ```sh
-tkn p start simple-pipeline -n tekton-pipelines
+kubectl get prs -n tekton-pipelines
+```
+
+You should see something like this:
+```bash
+NAME                  SUCCEEDED   REASON   STARTTIME   COMPLETIONTIME
+simple-pipeline-run   False       Failed   9s          3s
 ```
 
 5. **Observe the Operator logs:**
@@ -49,22 +56,22 @@ spec:
   tasks:
   - name: echo-task
     taskSpec:
+      stepTemplate:
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          runAsUser: 1000
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
       steps:
-      - image: busybox
-        name: echo-message
+      - name: echo-message
+        image: busybox:1.36
         script: |
           #!/bin/sh
           echo "Hello, Tekton!"
-          exit 0 # <- Updated to succeed
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 3000
-          seccompProfile:
-            type: "RuntimeDefault"
+          exit 0 # <- Update here so it passes
 ```
 
 7. **Apply the update:**
@@ -77,17 +84,29 @@ kubectl apply -k config/samples
 tkn p start simple-pipeline -n tekton-pipelines
 ```
 
-9. **Confirm success in the operator logs:**
+9. **Confirm it passed:**
+```bash
+kubectl get prs -n tekton-pipelines
+```
+
+You should see an output like this:
+```bash
+NAME                        SUCCEEDED   REASON      STARTTIME   COMPLETIONTIME
+simple-pipeline-run         False       Failed      2m9s        2m3s
+simple-pipeline-run-pbwxj   True        Succeeded   32s         28s
+```
+
+10. **Confirm success in the operator logs:**
 ```sh
 {"level":"info","msg":"Processing successful PipelineRun","namespace":"tekton-pipelines","pipeline_run":"simple-pipeline-run-v4j9h","status":"succeeded","time":"2025-08-20T13:58:43-04:00"}
 {"level":"info","msg":"Successfully sent request to KITE","operation":"pipeline-success","status_code":200,"time":"2025-08-20T13:58:43-04:00"}
 {"id":"ed361d7b-852c-48c8-9f16-b4cb16d2b1a1","level":"info","msg":"Successfully reported pipeline success to KITE","operation":"pipeline-success","pipeline_run":"simple-pipeline-run-v4j9h","time":"2025-08-20T13:58:43-04:00"}
 ```
 
-10. **Stop the operator:**
+11. **Stop the operator:**
 You can stop it with `Ctrl-C`.
 
-11. **Delete the sample resources:**
+12. **Delete the sample resources:**
 ```sh
 kubectl delete -k config/samples/
 ```
