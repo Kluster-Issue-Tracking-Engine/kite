@@ -1,9 +1,9 @@
 # Build the manager binary
-FROM golang:1.24 AS builder
+FROM registry.redhat.io/ubi9/go-toolset@sha256:d1c1f2af6122b0ea3456844210d6d9c4d96e78c128bc02fabeadf51239202221 AS builder
 ARG TARGETOS
 ARG TARGETARCH
+ENV GOTOOLCHAIN=auto
 
-WORKDIR /workspace
 # Copy the Go Modules manifests
 COPY go.mod go.mod
 COPY go.sum go.sum
@@ -13,23 +13,29 @@ RUN go mod download
 
 # Copy the go source
 COPY cmd/main.go cmd/main.go
+
 # Not needed (initially using Tekton PipelineRuns resources).
 # Uncomment when needed.
 #COPY api/ api/
+#
 COPY internal/ internal/
 
 # Build
-# the GOARCH has not a default value to allow the binary be built according to the host where the command
-# was called. For example, if we call make docker-build in a local env which has the Apple Silicon M1 SO
-# the docker BUILDPLATFORM arg will be linux/arm64 when for Apple x86 it will be linux/amd64. Therefore,
-# by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o manager cmd/main.go
 
-# Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
+FROM registry.redhat.io/ubi9/ubi-minimal@sha256:2f06ae0e6d3d9c4f610d32c480338eef474867f435d8d28625f2985e8acde6e8
 WORKDIR /
-COPY --from=builder /workspace/manager .
+
+# Copy binaries from buidler
+COPY --from=builder /opt/app-root/src .
+
+LABEL name="Konflux KITE Bridge Operator"
+LABEL description="Konflux Kite Bridge Operator"
+LABEL io.k8s.description="Konflux Kite Bridge Operator"
+LABEL io.k8s.display-name="konflux-kite-bridge-operator"
+LABEL summary="Konflux Kite Bridge Operator"
+LABEL com.redhat.component="kite-bridge-operator"
+
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]

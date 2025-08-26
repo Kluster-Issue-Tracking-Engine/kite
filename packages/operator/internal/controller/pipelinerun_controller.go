@@ -46,9 +46,7 @@ const (
 	RetryWaitPeriod = time.Minute * 2
 )
 
-// +kubebuilder:rbac:groups=tekton.konflux.dev,resources=pipelineruns,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=tekton.konflux.dev,resources=pipelineruns/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=tekton.konflux.dev,resources=pipelineruns/finalizers,verbs=update
+// +kubebuilder:rbac:groups=tekton.dev,resources=pipelineruns,verbs=get;list;watch
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
