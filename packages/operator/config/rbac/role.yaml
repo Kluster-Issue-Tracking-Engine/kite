@@ -5,28 +5,10 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - tekton.konflux.dev
+  - tekton.dev
   resources:
   - pipelineruns
   verbs:
-  - create
-  - delete
   - get
   - list
-  - patch
-  - update
   - watch
-- apiGroups:
-  - tekton.konflux.dev
-  resources:
-  - pipelineruns/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - tekton.konflux.dev
-  resources:
-  - pipelineruns/status
-  verbs:
-  - get
-  - patch
-  - update
