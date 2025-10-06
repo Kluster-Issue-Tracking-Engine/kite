@@ -1,4 +1,4 @@
-# Kluster Issue Tracking Engine (Kite) :kite:
+# Kite :kite:
 
 ![Go CI Checks](https://github.com/konflux-ci/kite/actions/workflows/go-ci-checks.yaml/badge.svg)
 
